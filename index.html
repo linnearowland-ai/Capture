@@ -495,6 +495,14 @@ function importEntries(file) {
         if (!exists) {
           entries.push({ id: Date.now() + Math.random() * 1000, text: text, source: source, category: cat, spark: spark, claudeSpark: false, checked: false, timestamp: new Date().toISOString() });
           imported++;
+          // If this is a learning entry with a user spark, also restore it as a Thoughts entry
+          if (cat === 'learning' && spark) {
+            var sparkExists = entries.some(function(x) { return x.text === spark; });
+            if (!sparkExists) {
+              entries.push({ id: Date.now() + Math.random() * 1000 + 1, text: spark, source: 'sparked from: ' + text.slice(0, 60), category: 'thoughts', spark: '', claudeSpark: false, checked: false, timestamp: new Date().toISOString() });
+              imported++;
+            }
+          }
         }
       });
       saveEntries(); renderEntries();
